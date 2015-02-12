@@ -63,6 +63,9 @@
 (defun uroboro-setup-tags ()
   (put 'uroboro-mode 'find-tag-default-function 'uroboro-find-tag-default))
 
+(defun uroboro-setup-indentation ()
+  (set (make-local-variable 'indent-line-function) 'uroboro-indent-line))
+
 (defun uroboro-process-file ()
   "Processes the current Uroboro file."
   (interactive)
@@ -88,11 +91,31 @@ data if you want to preserve them."
   "Find default for `find-tag' etc."
   (uroboro-variable-name-at-point))
 
+(defun uroboro-find-toplevel-entity ()
+  "Move point to the beginning of the Uroboro toplevel entity point is in."
+  (interactive)
+  (search-regexp-backwards uroboro-toplevel-keywords-regexp))
+
+(defun uroboro-indent-line ()
+  "Indent current line as Uroboro code."
+  (interactive)
+  (save-excursion
+    (beginning-of-line)
+    (cond
+     ;; line begins a top-level entity -> indent to column 0
+     ((looking-at (concat "^\\s-*" uroboro-toplevel-keywords-regexp))
+      (indent-line-to 0))
+
+     ;; other line -> indent to column 2
+     (t
+      (indent-line-to 2)))))
+
 (define-derived-mode uroboro-mode fundamental-mode "uroboro"
   "Major mode for editing Uroboro files."
   (uroboro-setup-fontlock)
   (uroboro-setup-syntax-table)
-  (uroboro-setup-tags))
+  (uroboro-setup-tags)
+  (uroboro-setup-indentation))
 
 (define-key uroboro-mode-map "\C-c\C-l" 'uroboro-process-file)
 
