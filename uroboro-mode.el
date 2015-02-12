@@ -1,10 +1,18 @@
+(defvar uroboro-toplevel-keywords
+  '("data" "codata" "function")
+  "Keywords of Uroboro that start a top-level entity")
+
 (defvar uroboro-keywords
-  '("data" "codata" "function" "where")
+  (append uroboro-toplevel-keywords '("where"))
   "Keywords of Uroboro, that is, reserved words that look like
   names but are treated specially by the lexer.")
 
+(defvar uroboro-toplevel-keywords-regexp
+  (regexp-opt uroboro-toplevel-keywords 'words)
+  "Regular expression to match Uroboro keywords that start toplevel entities")
+
 (defvar uroboro-keywords-regexp
-  (concat "^" (regexp-opt uroboro-keywords) "$")
+  (regexp-opt uroboro-keywords)
   "Regular expression to match Uroboro reserved words.")
 
 (defvar uroboro-interpunctuation
@@ -12,9 +20,13 @@
   "Interpunctuation characters of Uroboro, that is, non-space
   non-matching characters that cannot be part of a name.")
 
+(defvar uroboro-interpunctuation-regexp
+  (concat "[" uroboro-interpunctuation "]")
+  "Regular expression to match Uroboro interpunctuation characters.")
+
 (defvar uroboro-font-lock-defaults
-  `((,(regexp-opt uroboro-keywords 'words) . 'font-lock-keyword-face)
-    (,(concat "[" pts-interpunctuation "]") . 'font-lock-builtin-face))
+  `((,uroboro-keywords-regexp . 'font-lock-keyword-face)
+    (,uroboro-interpunctuation-regexp . 'font-lock-builtin-face))
   "Font lock configuration for Uroboro.")
 
 (defvar uroboro-command
@@ -69,7 +81,7 @@ name as a string. Otherwise, return nil.
 data if you want to preserve them."
   (let ((candidate (thing-at-point 'symbol)))
     (and (stringp candidate)
-         (not (string-match uroboro-keywords-regexp candidate))
+         (not (string-match (concat "^" uroboro-keywords-regexp "$") candidate))
          candidate)))
 
 (defun uroboro-find-tag-default ()
