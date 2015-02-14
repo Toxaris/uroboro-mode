@@ -14,7 +14,7 @@
 
 (defvar uroboro-font-lock-defaults
   `((,(regexp-opt uroboro-keywords 'words) . 'font-lock-keyword-face)
-    (,(concat "[" pts-interpunctuation "]") . 'font-lock-builtin-face))
+    (,(concat "[" uroboro-interpunctuation "]") . 'font-lock-builtin-face))
   "Font lock configuration for Uroboro.")
 
 (defvar uroboro-command
