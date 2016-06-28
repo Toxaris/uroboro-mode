@@ -106,6 +106,14 @@ data if you want to preserve them."
      ((looking-at (concat "^\\s-*" uroboro-toplevel-keywords-regexp))
       (indent-line-to 0))
 
+     ;; line begins a line comment -> indent to column 0
+     ((looking-at "^\\s-*--")
+      (indent-line-to 0))
+
+     ;; line begins a block comment -> indent to column 0
+     ((looking-at "^\\s-*{-")
+      (indent-line-to 0))
+
      ;; other line -> indent to column 2
      (t
       (indent-line-to 2)))))
